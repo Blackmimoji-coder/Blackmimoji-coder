@@ -1,1 +1,57 @@
-ggg
+name: Deploy Fidelis to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Inject secrets into config.js at deploy time
+      # config.js is gitignored so we create it fresh here using GitHub Secrets
+      - name: Create config.js from GitHub Secrets
+        run: |
+          cat > config.js << 'CONFIGEOF'
+          window.FIDELIS_CONFIG = {
+            SUPABASE_URL: '${{ secrets.SUPABASE_URL }}',
+            SUPABASE_KEY: '${{ secrets.SUPABASE_KEY }}',
+            ADMIN_EMAIL:  '${{ secrets.ADMIN_EMAIL }}',
+            ADMIN_HASH:   '${{ secrets.ADMIN_HASH }}',
+            ADMIN_SALT:   '${{ secrets.ADMIN_SALT }}'
+          };
+          CONFIGEOF
+
+      # Rename index file for GitHub Pages
+      - name: Prepare files
+        run: |
+          cp fidelis_v2.html index.html
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
