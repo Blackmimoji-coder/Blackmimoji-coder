@@ -1,4 +1,4 @@
-name: Deploy Fidelis to GitHub Pages
+name: Deploy index to GitHub Pages
 
 on:
   push:
