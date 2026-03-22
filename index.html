@@ -1,0 +1,1582 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fidelis Nail Parlour</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:'Outfit',sans-serif;background:#fff;color:#212121}
+body{overflow-x:hidden}
+img,video{max-width:100%;display:block}
+button{cursor:pointer;border:none;background:none;color:inherit;font-family:inherit;font-size:inherit}
+ul,ol{list-style:none}
+a{color:inherit;text-decoration:none}
+table{border-collapse:collapse;width:100%}
+input,select,textarea{font-family:inherit;font-size:inherit;outline:none}
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator{cursor:pointer;opacity:.6}
+:root{
+  --p50:#FFF8F3;--p100:#FFEEE0;--p200:#FFDAB9;--p300:#FFC799;
+  --p400:#FFB07A;--p500:#FF995C;--p600:#E67D3D;--p700:#CC6020;
+  --black:#000;--white:#fff;
+  --g50:#FAFAFA;--g100:#F5F5F5;--g200:#EEEEEE;--g300:#E0E0E0;
+  --g400:#BDBDBD;--g500:#9E9E9E;--g600:#757575;--g700:#616161;
+  --g800:#424242;--g900:#212121;
+  --shadow-sm:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.06);
+  --shadow:0 2px 15px -3px rgba(0,0,0,.07),0 10px 20px -2px rgba(0,0,0,.04);
+  --shadow-lg:0 10px 40px -15px rgba(0,0,0,.10);
+  --shadow-xl:0 25px 50px -12px rgba(0,0,0,.15);
+  --radius-sm:8px;--radius:12px;--radius-lg:16px;--radius-xl:20px;--radius-2xl:24px;--radius-full:9999px;
+}
+/* Animations */
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideIn{from{opacity:0;transform:translateX(-16px)}to{opacity:1;transform:translateX(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.fade-in{animation:fadeIn .3s ease-out}
+.slide-in{animation:slideIn .3s ease-out}
+/* Masonry */
+.masonry{column-count:3;column-gap:1rem}
+.masonry-item{break-inside:avoid;margin-bottom:1rem}
+@media(max-width:1024px){.masonry{column-count:2}}
+@media(max-width:640px){.masonry{column-count:1}}
+/* Scrollbar */
+.scroll-thin::-webkit-scrollbar{width:5px}
+.scroll-thin::-webkit-scrollbar-track{background:#f1f1f1;border-radius:4px}
+.scroll-thin::-webkit-scrollbar-thumb{background:#ccc;border-radius:4px}
+/* ── Mobile admin overrides ── */
+.adm-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.adm-card{background:#fff;border-radius:10px;padding:12px;box-shadow:0 1px 4px rgba(0,0,0,.06);border:1px solid #F0F0F0}
+.adm-section{background:#fff;border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,.06);border:1px solid #F0F0F0;overflow:hidden}
+.adm-row{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid #F5F5F5}
+.adm-row:last-child{border-bottom:none}
+.adm-label{font-size:.7rem;color:var(--g400);margin-bottom:1px}
+.adm-val{font-size:.85rem;font-weight:600;color:#000}
+.adm-badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:.65rem;font-weight:700}
+.adm-btn-sm{padding:5px 10px;border-radius:6px;font-size:.72rem;font-weight:600;cursor:pointer;border:none}
+.adm-th{padding:8px 10px;text-align:left;font-size:.7rem;color:var(--g400);font-weight:700;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap}
+.adm-td{padding:8px 10px;font-size:.78rem;white-space:nowrap}
+.adm-page-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.adm-page-title{font-size:.95rem;font-weight:700;color:#000}
+.adm-page-sub{font-size:.7rem;color:var(--g400);margin-top:1px}
+.adm-add-btn{padding:7px 12px;background:#000;color:#fff;border-radius:8px;font-size:.75rem;font-weight:600;border:none;cursor:pointer}
+.adm-stat-icon{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;margin-bottom:6px}
+.adm-staff-row{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid #F5F5F5}
+.adm-avatar{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--p200),var(--p400));display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0}
+.adm-gal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.adm-gal-item{border-radius:8px;overflow:hidden;position:relative;aspect-ratio:1}
+.adm-gal-item img,.adm-gal-item video{width:100%;height:100%;object-fit:cover}
+.adm-gal-del{position:absolute;top:4px;right:4px;background:rgba(0,0,0,.6);border:none;border-radius:4px;cursor:pointer;padding:3px;display:flex;align-items:center;justify-content:center}
+@media(min-width:768px){
+  .adm-grid-2{grid-template-columns:repeat(4,1fr);gap:12px}
+  .adm-gal-grid{grid-template-columns:repeat(4,1fr);gap:10px}
+  .adm-card{padding:16px}
+  .adm-th{padding:10px 14px;font-size:.75rem}
+  .adm-td{padding:10px 14px;font-size:.82rem}
+}
+/* Spinner */
+.spinner{width:24px;height:24px;border:3px solid var(--p200);border-top-color:var(--p500);border-radius:50%;animation:spin .7s linear infinite;display:inline-block}
+/* Responsive helpers */
+@media(min-width:768px){.md-flex{display:flex!important}.md-hidden{display:none!important}.md-block{display:block!important}.md-grid-2{grid-template-columns:repeat(2,1fr)!important}.md-grid-3{grid-template-columns:repeat(3,1fr)!important}.md-grid-4{grid-template-columns:repeat(4,1fr)!important}.md-ml-64{margin-left:16rem!important}.md-ml-20{margin-left:5rem!important}.md-pb-0{padding-bottom:0!important}}
+@media(max-width:767px){.hide-mobile{display:none!important}}
+</style>
+</head>
+<body>
+<div id="app" style="min-height:100vh"></div>
+
+<script src="config.js"></script>
+
+<script>
+'use strict';
+
+/* CONFIG - loaded from window.FIDELIS_CONFIG (set by config.js) */
+var _cfg       = (window.FIDELIS_CONFIG) || {};
+var SUPA_URL   = _cfg.SUPABASE_URL  || '';
+var SUPA_KEY   = _cfg.SUPABASE_KEY  || '';
+var ADMIN_EMAIL= _cfg.ADMIN_EMAIL   || '';
+var ADMIN_PASS = _cfg.ADMIN_PASSWORD|| '';
+var ADMIN_HASH = _cfg.ADMIN_HASH    || '';
+var ADMIN_SALT = _cfg.ADMIN_SALT    || '';
+var db = null;
+try {
+  if (SUPA_URL && SUPA_KEY) db = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+  else console.warn('Supabase not configured. Check config.js');
+} catch(e) { console.warn('Supabase init failed:', e); }
+
+/* =====================================================================
+   APP STATE
+   ===================================================================== */
+var view        = 'public';   // 'public' | 'admin'
+var page        = 'home';     // public page
+var adminPage   = 'dashboard';
+var loggedIn    = false;
+var adminName   = 'Admin';
+var adminRole   = 'Manager';
+var sidebarOpen = true;
+var mobileMenu  = false;
+var loginErr    = '';
+var loginLoading= false;
+var galleryFilter = 'all';
+var showModal   = false;
+var modalType   = '';
+var modalData   = null;
+var bookingForm = { name:'', phone:'', service:'', date:'', time:'' };
+var salonSettings = { logo:'heart', heroImage:'' }; /* editable icons/images */
+
+/* data arrays - populated from Supabase */
+var services    = [];
+var bookings    = [];
+var staff       = [];
+var inventory   = [];
+var gallery     = [];
+
+/* id counters for offline fallback */
+var nextSvcId=1,nextBkId=1,nextStId=1,nextInvId=1,nextGalId=1;
+
+var STATUS_COLORS = {
+  pending:     'background:#FEF9C3;color:#854D0E',
+  deposit_paid:'background:#DBEAFE;color:#1D4ED8',
+  approved:    'background:#DCFCE7;color:#15803D',
+  completed:   'background:#D1FAE5;color:#047857',
+  cancelled:   'background:#F3F4F6;color:#374151',
+  no_show:     'background:#FEE2E2;color:#991B1B'
+};
+var STATUS_LABELS = {
+  pending:'Pending', deposit_paid:'Deposit Paid', approved:'Approved',
+  completed:'Completed', cancelled:'Cancelled', no_show:'No Show'
+};
+
+var config = {
+  salon_name: 'Fidelis Nail Parlour',
+  tagline: 'Where Beauty Meets Elegance',
+  phone: '+254 700 000 000',
+  email: 'hello@fidelisnails.com',
+  location: 'Nakuru, Gilgil - Main Road'
+};
+
+/* =====================================================================
+   HELPERS
+   ===================================================================== */
+function kes(n) { return 'KES ' + (Number(n)||0).toLocaleString(); }
+function initials(name) {
+  if (!name) return '?';
+  return name.split(' ').map(function(w){ return w[0]||''; }).join('').toUpperCase().slice(0,2);
+}
+function el(id) { return document.getElementById(id); }
+function svgIcon(path, cls) {
+  return '<svg class="'+cls+'" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+path+'</svg>';
+}
+
+/* =====================================================================
+   RENDER ENGINE
+   ===================================================================== */
+function render() {
+  var app = el('app');
+  if (!app) return;
+  try {
+    if (view === 'public') {
+      app.innerHTML = renderPublic();
+    } else if (!loggedIn) {
+      app.innerHTML = renderLogin();
+    } else {
+      app.innerHTML = renderAdmin();
+    }
+    bindEvents();
+  } catch(e) {
+    console.error('Render error:', e);
+    app.innerHTML = '<div style="padding:40px;text-align:center;font-family:sans-serif;">'
+      + '<h2 style="color:#e53e3e;margin-bottom:8px;">Something went wrong</h2>'
+      + '<p style="color:#666;margin-bottom:16px;">' + (e.message||String(e)) + '</p>'
+      + '<button onclick="loggedIn=false;view=\'public\';render()" style="padding:10px 20px;background:#000;color:#fff;border:none;border-radius:8px;cursor:pointer;">Reset</button>'
+      + '</div>';
+  }
+}
+
+/* =====================================================================
+   PUBLIC SITE
+   ===================================================================== */
+function renderPublic() {
+  var content = '';
+  if (page === 'home')     content = renderHome();
+  if (page === 'services') content = renderServices();
+  if (page === 'booking')  content = renderBooking();
+  if (page === 'gallery')  content = renderGalleryPage();
+  return renderHeader() + '<main>' + content + '</main>' + renderFooter() + (showModal ? renderModal() : '');
+}
+
+function renderHeader() {
+  var links = [
+    {id:'home',label:'Home'},{id:'services',label:'Services'},
+    {id:'gallery',label:'Gallery'}
+  ];
+  var desktopLinks = links.map(function(l){
+    var active = page===l.id ? 'color:#000;font-weight:600;' : 'color:var(--g500);';
+    return '<button onclick="go(\''+l.id+'\')" style="font-size:.875rem;font-weight:500;'+active+'background:none;border:none;cursor:pointer;transition:color .15s">'+l.label+'</button>';
+  }).join('');
+
+  var mobileLinksHtml = '';
+  if (mobileMenu) {
+    mobileLinksHtml = '<div style="border-top:1px solid var(--g200);padding:12px 16px;display:flex;flex-direction:column;gap:4px;" class="fade-in">'
+      + links.map(function(l){
+          var bg = page===l.id ? 'background:var(--p100);color:#000;' : 'color:var(--g700);';
+          return '<button onclick="go(\''+l.id+'\')" style="text-align:left;padding:12px 16px;border-radius:var(--radius);font-weight:500;'+bg+'background:none;border:none;cursor:pointer;transition:.15s">'+l.label+'</button>';
+        }).join('')
+      + '<button onclick="go(\'booking\')" style="margin-top:4px;padding:12px 16px;background:#000;color:#fff;border-radius:var(--radius);font-weight:500;border:none;cursor:pointer;">Book Appointment</button>'
+      + '<button onclick="goAdmin()" style="margin-top:4px;padding:10px;font-size:.75rem;color:var(--g500);background:none;border:none;cursor:pointer;">Admin Access</button>'
+      + '</div>';
+  }
+
+  return '<header style="position:sticky;top:0;z-index:50;background:rgba(255,255,255,.97);backdrop-filter:blur(8px);border-bottom:1px solid var(--g200);">'
+    + '<nav style="max-width:80rem;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:64px;">'
+    + '<button onclick="go(\'home\')" style="display:flex;align-items:center;gap:10px;background:none;border:none;cursor:pointer;">'
+    +   '<div style="width:40px;height:40px;background:linear-gradient(135deg,var(--p200),var(--p300));border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-sm);">'
+    +     svgIcon('<path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>','')
+    +   '</div>'
+    +   '<span style="font-family:\'Playfair Display\',serif;font-size:1.125rem;font-weight:600;">'+config.salon_name+'</span>'
+    + '</button>'
+    + '<div class="hide-mobile" style="display:flex;align-items:center;gap:32px;">'
+    + desktopLinks
+    + '<button onclick="go(\'booking\')" style="background:#000;color:#fff;padding:10px 20px;border-radius:var(--radius-full);font-size:.875rem;font-weight:500;border:none;cursor:pointer;box-shadow:var(--shadow-sm);">Book Now</button>'
+    + '<button onclick="goAdmin()" style="font-size:.75rem;color:var(--g400);background:none;border:none;cursor:pointer;">[lock] Admin</button>'
+    + '</div>'
+    + '<button id="menuBtn" class="md-hidden" style="padding:8px;border-radius:var(--radius-sm);background:none;border:none;cursor:pointer;">'
+    +   svgIcon(mobileMenu ? '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>' : '<line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>','')
+    + '</button>'
+    + '</nav>'
+    + mobileLinksHtml
+    + '</header>';
+}
+
+function renderFooter() {
+  return '<footer style="background:#000;color:#fff;padding:48px 24px 24px;">'
+    + '<div style="max-width:80rem;margin:0 auto;">'
+    + '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:32px;margin-bottom:32px;">'
+    + '<div>'
+    + '<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">'
+    + '<div style="width:36px;height:36px;background:linear-gradient(135deg,var(--p200),var(--p300));border-radius:50%;display:flex;align-items:center;justify-content:center;">'
+    + svgIcon('<path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>','')
+    + '</div>'
+    + '<span style="font-family:\'Playfair Display\',serif;font-size:1.1rem;font-weight:600;">'+config.salon_name+'</span>'
+    + '</div>'
+    + '<p style="color:var(--g400);font-size:.875rem;">Premium nail care for the modern woman.</p>'
+    + '</div>'
+    + '<div>'
+    + '<h4 style="font-weight:600;margin-bottom:12px;">Quick Links</h4>'
+    + '<div style="display:flex;flex-direction:column;gap:8px;">'
+    + ['home','services','gallery','booking'].map(function(p){
+        return '<button onclick="go(\''+p+'\')" style="color:var(--g400);font-size:.875rem;text-align:left;background:none;border:none;cursor:pointer;transition:color .15s;width:fit-content;">'
+          + p.charAt(0).toUpperCase()+p.slice(1)
+          + '</button>';
+      }).join('')
+    + '</div>'
+    + '</div>'
+    + '<div>'
+    + '<h4 style="font-weight:600;margin-bottom:12px;">Contact</h4>'
+    + '<div style="display:flex;flex-direction:column;gap:8px;color:var(--g400);font-size:.875rem;">'
+    + '<span>'+config.phone+'</span><span>'+config.email+'</span><span>'+config.location+'</span>'
+    + '</div>'
+    + '</div>'
+    + '</div>'
+    + '<div style="border-top:1px solid var(--g800);padding-top:24px;text-align:center;color:var(--g500);font-size:.8rem;">'
+    + '(c) '+new Date().getFullYear()+' '+config.salon_name+'. All rights reserved.'
+    + '</div>'
+    + '</div>'
+    + '</footer>';
+}
+
+/* --- HOME PAGE --- */
+function renderHome() {
+  var svcCards = services.slice(0,8).map(function(s,i){
+    return '<div class="fade-in" style="background:#fff;border-radius:var(--radius-xl);padding:24px;box-shadow:var(--shadow);border:1px solid var(--g100);transition:box-shadow .2s;" onmouseover="this.style.boxShadow=\'var(--shadow-lg)\'" onmouseout="this.style.boxShadow=\'var(--shadow)\'">'
+      + '<div style="width:48px;height:48px;background:linear-gradient(135deg,var(--p100),var(--p200));border-radius:var(--radius);display:flex;align-items:center;justify-content:center;margin-bottom:16px;">'
+      + svgIcon('<path d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>','')
+      + '</div>'
+      + '<h3 style="font-weight:600;font-size:1rem;margin-bottom:4px;">'+s.name+'</h3>'
+      + '<p style="font-size:.8rem;color:var(--g500);margin-bottom:12px;">'+s.duration+'</p>'
+      + '<div style="display:flex;align-items:center;justify-content:space-between;">'
+      + '<span style="font-weight:700;color:var(--p600);">'+kes(s.price)+'</span>'
+      + '<button onclick="bookNow('+s.id+')" style="padding:6px 14px;background:#000;color:#fff;border-radius:var(--radius-full);font-size:.8rem;font-weight:500;border:none;cursor:pointer;">Book</button>'
+      + '</div>'
+      + '</div>';
+  }).join('');
+
+  var galPrev = gallery.slice(0,8).map(function(g){
+    var img = g.fileData
+      ? (g.type==='video'
+          ? '<video src="'+g.fileData+'" style="width:100%;height:100%;object-fit:cover;"></video>'
+          : '<img src="'+g.fileData+'" alt="'+g.fileName+'" style="width:100%;height:100%;object-fit:cover;" loading="lazy">')
+      : '<div style="width:100%;height:100%;background:linear-gradient(135deg,var(--p100),var(--p300));"></div>';
+    return '<div style="aspect-ratio:1;border-radius:var(--radius-lg);overflow:hidden;cursor:pointer;" onclick="openGalleryItem('+g.id+')">'
+      + img + '</div>';
+  }).join('');
+
+  return '<section style="background:linear-gradient(135deg,var(--p50),#fff,var(--p100));padding:80px 24px;position:relative;overflow:hidden;">'
+    + '<div style="position:absolute;top:-60px;right:-60px;width:300px;height:300px;background:radial-gradient(circle,var(--p200),transparent);opacity:.4;pointer-events:none;"></div>'
+    + '<div style="position:absolute;bottom:-60px;left:-60px;width:280px;height:280px;background:radial-gradient(circle,var(--p300),transparent);opacity:.25;pointer-events:none;"></div>'
+    + '<div style="max-width:48rem;margin:0 auto;text-align:center;position:relative;">'
+    + '<div style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.8);padding:6px 16px;border-radius:var(--radius-full);box-shadow:var(--shadow-sm);margin-bottom:24px;">'
+    + '<span style="width:8px;height:8px;background:#4ADE80;border-radius:50%;animation:pulse 2s infinite;display:inline-block;"></span>'
+    + '<span style="font-size:.875rem;color:var(--g600);">Now accepting appointments</span>'
+    + '</div>'
+    + '<h1 style="font-family:\'Playfair Display\',serif;font-size:clamp(2.5rem,6vw,4.5rem);font-weight:600;margin-bottom:16px;line-height:1.1;">'+config.salon_name+'</h1>'
+    + '<p style="font-size:1.125rem;color:var(--g500);margin-bottom:36px;">'+config.tagline+'</p>'
+    + '<div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">'
+    + '<button onclick="go(\'booking\')" style="padding:14px 32px;background:#000;color:#fff;border-radius:var(--radius-full);font-weight:500;border:none;cursor:pointer;box-shadow:var(--shadow);font-size:.95rem;">Book Appointment</button>'
+    + '<button onclick="go(\'services\')" style="padding:14px 32px;background:#fff;color:#000;border-radius:var(--radius-full);font-weight:500;border:1px solid var(--g200);cursor:pointer;box-shadow:var(--shadow-sm);font-size:.95rem;">View Services</button>'
+    + '</div>'
+    + '</div>'
+    + '</section>'
+
+    + '<section style="padding:80px 24px;background:#fff;">'
+    + '<div style="max-width:80rem;margin:0 auto;">'
+    + '<div style="text-align:center;margin-bottom:48px;">'
+    + '<span style="color:var(--p500);font-size:.8rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;">Our Services</span>'
+    + '<h2 style="font-family:\'Playfair Display\',serif;font-size:2rem;font-weight:600;margin-top:8px;">Treatments We Offer</h2>'
+    + '</div>'
+    + (services.length ? '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:20px;">'+svcCards+'</div>' : '<p style="text-align:center;color:var(--g400);">No services listed yet.</p>')
+    + '<div style="text-align:center;margin-top:32px;">'
+    + '<button onclick="go(\'services\')" style="background:none;border:none;cursor:pointer;color:#000;font-weight:500;font-size:.95rem;">View All Services &rarr;</button>'
+    + '</div>'
+    + '</div>'
+    + '</section>'
+
+    + '<section style="padding:80px 24px;background:var(--g50);">'
+    + '<div style="max-width:80rem;margin:0 auto;">'
+    + '<div style="text-align:center;margin-bottom:48px;">'
+    + '<span style="color:var(--p500);font-size:.8rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;">Our Work</span>'
+    + '<h2 style="font-family:\'Playfair Display\',serif;font-size:2rem;font-weight:600;margin-top:8px;">Nail Art Gallery</h2>'
+    + '</div>'
+    + (gallery.length ? '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;">'+galPrev+'</div>' : '<p style="text-align:center;color:var(--g400);">No gallery items yet.</p>')
+    + '<div style="text-align:center;margin-top:32px;">'
+    + '<button onclick="go(\'gallery\')" style="background:none;border:none;cursor:pointer;color:#000;font-weight:500;font-size:.95rem;">View Full Gallery &rarr;</button>'
+    + '</div>'
+    + '</div>'
+    + '</section>'
+
+    + '<section style="padding:80px 24px;background:#000;color:#fff;">'
+    + '<div style="max-width:80rem;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:48px;align-items:center;">'
+    + '<div>'
+    + '<span style="color:var(--p300);font-size:.8rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;">Get In Touch</span>'
+    + '<h2 style="font-family:\'Playfair Display\',serif;font-size:2rem;font-weight:600;margin:12px 0 16px;">Visit Us Today</h2>'
+    + '<p style="color:var(--g400);margin-bottom:24px;line-height:1.7;">Experience the ultimate nail care at Fidelis. Our skilled technicians are ready to give you the perfect nails you deserve.</p>'
+    + '<button onclick="go(\'booking\')" style="padding:14px 28px;background:var(--p200);color:#000;border-radius:var(--radius-full);font-weight:500;border:none;cursor:pointer;">Book Your Appointment</button>'
+    + '</div>'
+    + '<div style="display:flex;flex-direction:column;gap:16px;">'
+    + contactCard('[phone]', 'Phone', config.phone)
+    + contactCard('[mail]',  'Email', config.email)
+    + contactCard('[pin]',   'Location', config.location)
+    + '</div>'
+    + '</div>'
+    + '</section>';
+}
+
+function contactCard(icon, label, value) {
+  return '<div style="display:flex;align-items:center;gap:16px;padding:20px;background:rgba(255,255,255,.05);border-radius:var(--radius-xl);">'
+    + '<div style="width:44px;height:44px;background:rgba(255,218,185,.15);border-radius:var(--radius);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--p300);">'+icon+'</div>'
+    + '<div><p style="font-size:.8rem;color:var(--g400);margin-bottom:2px;">'+label+'</p><p style="color:#fff;font-size:.95rem;">'+value+'</p></div>'
+    + '</div>';
+}
+
+/* --- SERVICES PAGE --- */
+function renderServices() {
+  var cards = services.map(function(s){
+    return '<div style="background:#fff;border-radius:var(--radius-xl);padding:24px;box-shadow:var(--shadow);border:1px solid var(--g100);display:flex;flex-direction:column;gap:12px;" class="fade-in">'
+      + '<div style="display:flex;align-items:flex-start;justify-content:space-between;">'
+      + '<div style="width:48px;height:48px;background:linear-gradient(135deg,var(--p100),var(--p200));border-radius:var(--radius);display:flex;align-items:center;justify-content:center;">'
+      + svgIcon('<path d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>','')
+      + '</div>'
+      + '<span style="padding:4px 10px;background:var(--p50);color:var(--p600);border-radius:var(--radius-full);font-size:.75rem;font-weight:600;">'+s.category+'</span>'
+      + '</div>'
+      + '<h3 style="font-weight:600;font-size:1.05rem;">'+s.name+'</h3>'
+      + '<div style="display:flex;align-items:center;gap:6px;color:var(--g400);font-size:.85rem;">'
+      + svgIcon('<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>','')
+      + s.duration
+      + '</div>'
+      + '<div style="display:flex;align-items:center;justify-content:space-between;padding-top:12px;border-top:1px solid var(--g100);">'
+      + '<span style="font-size:1.25rem;font-weight:700;color:#000;">'+kes(s.price)+'</span>'
+      + '<button onclick="bookNow('+s.id+')" style="padding:8px 18px;background:#000;color:#fff;border-radius:var(--radius-full);font-size:.85rem;font-weight:500;border:none;cursor:pointer;">Book</button>'
+      + '</div>'
+      + '</div>';
+  }).join('');
+
+  return '<section style="padding:64px 24px;background:linear-gradient(to bottom,var(--p50),#fff);min-height:60vh;">'
+    + '<div style="max-width:80rem;margin:0 auto;">'
+    + '<div style="text-align:center;margin-bottom:48px;">'
+    + '<span style="color:var(--p500);font-size:.8rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;">Services</span>'
+    + '<h1 style="font-family:\'Playfair Display\',serif;font-size:2.5rem;font-weight:600;margin-top:8px;">Complete Nail Care Menu</h1>'
+    + '<p style="color:var(--g500);margin-top:8px;">All prices in Kenyan Shillings (KES)</p>'
+    + '</div>'
+    + (services.length
+        ? '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:20px;">'+cards+'</div>'
+        : '<p style="text-align:center;color:var(--g400);padding:48px;">No services added yet.</p>')
+    + '</div></section>';
+}
+
+/* --- BOOKING PAGE --- */
+function renderBooking() {
+  var svcOptions = '<option value="">Choose a service...</option>'
+    + services.map(function(s){
+        var sel = bookingForm.service==s.id ? 'selected' : '';
+        return '<option value="'+s.id+'" '+sel+'>'+s.name+' - '+kes(s.price)+'</option>';
+      }).join('');
+
+  var summary = '';
+  if (bookingForm.service) {
+    var sel = services.find(function(s){ return s.id==bookingForm.service; });
+    if (sel) {
+      var deposit = Math.round(sel.price * 0.5);
+      summary = '<div style="background:linear-gradient(135deg,var(--p50),var(--p100));border-radius:var(--radius-xl);padding:24px;margin-top:8px;">'
+        + '<h3 style="font-weight:600;margin-bottom:16px;">Booking Summary</h3>'
+        + row('Service', sel.name) + row('Duration', sel.duration)
+        + row('Full Price', kes(sel.price))
+        + '<div style="border-top:1px solid var(--p200);margin-top:12px;padding-top:12px;display:flex;justify-content:space-between;align-items:center;">'
+        + '<div><span style="font-weight:600;color:#000;">Deposit (50%)</span><p style="font-size:.8rem;color:var(--g500);margin-top:2px;">Required to confirm</p></div>'
+        + '<span style="font-size:1.25rem;font-weight:700;color:var(--p600);">'+kes(deposit)+'</span>'
+        + '</div></div>';
+    }
+  }
+
+  return '<section style="padding:64px 24px;background:linear-gradient(to bottom,var(--p50),#fff);min-height:80vh;">'
+    + '<div style="max-width:40rem;margin:0 auto;">'
+    + '<div style="text-align:center;margin-bottom:40px;">'
+    + '<span style="color:var(--p500);font-size:.8rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;">Book Now</span>'
+    + '<h1 style="font-family:\'Playfair Display\',serif;font-size:2.5rem;font-weight:600;margin-top:8px;">Schedule Appointment</h1>'
+    + '</div>'
+    + '<div style="background:#fff;border-radius:var(--radius-2xl);padding:36px;box-shadow:var(--shadow-lg);border:1px solid var(--g100);">'
+    + '<form id="booking-form" style="display:flex;flex-direction:column;gap:20px;">'
+    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">'
+    + formField('text','bk-name','Full Name',bookingForm.name,'Your full name','updateBk("name",this.value)')
+    + formField('tel','bk-phone','Phone Number',bookingForm.phone,'+254 7XX XXX XXX','updateBk("phone",this.value)')
+    + '</div>'
+    + '<div>'
+    + '<label style="display:block;font-size:.8rem;font-weight:600;color:var(--g700);margin-bottom:6px;">Service</label>'
+    + '<select id="bk-service" onchange="updateBk(\'service\',this.value);render()" style="width:100%;padding:11px 14px;border:1.5px solid var(--g300);border-radius:var(--radius);font-size:.95rem;background:#fff;cursor:pointer;">'+svcOptions+'</select>'
+    + '</div>'
+    + summary
+    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">'
+    + formField('date','bk-date','Preferred Date',bookingForm.date,'','updateBk("date",this.value)')
+    + formField('time','bk-time','Preferred Time',bookingForm.time,'','updateBk("time",this.value)')
+    + '</div>'
+    + '<div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:var(--radius);padding:14px;font-size:.85rem;color:#92400E;">'
+    + '<strong>50% deposit required</strong> to confirm your booking. Payment details will be sent after submission.'
+    + '</div>'
+    + '<button type="submit" style="width:100%;padding:14px;background:#000;color:#fff;border-radius:var(--radius);font-weight:600;font-size:.95rem;border:none;cursor:pointer;box-shadow:var(--shadow);">Submit Booking Request</button>'
+    + '</form>'
+    + '</div>'
+    + '</div></section>';
+}
+
+function row(label, val) {
+  return '<div style="display:flex;justify-content:space-between;padding:4px 0;">'
+    + '<span style="color:var(--g600);">'+label+'</span>'
+    + '<span style="font-weight:500;">'+val+'</span>'
+    + '</div>';
+}
+function formField(type, id, label, value, placeholder, onInput) {
+  return '<div>'
+    + '<label style="display:block;font-size:.8rem;font-weight:600;color:var(--g700);margin-bottom:6px;">'+label+'</label>'
+    + '<input type="'+type+'" id="'+id+'" value="'+value+'" placeholder="'+placeholder+'" oninput="'+onInput+'"'
+    + ' style="width:100%;padding:11px 14px;border:1.5px solid var(--g300);border-radius:var(--radius);font-size:.95rem;transition:border-color .15s;"'
+    + ' onfocus="this.style.borderColor=\'var(--p400)\'" onblur="this.style.borderColor=\'var(--g300)\'">'
+    + '</div>';
+}
+
+/* --- GALLERY PAGE --- */
+function renderGalleryPage() {
+  var cats = ['all','gel','extensions','art','care','polish','removal','combo'];
+  var tabs = cats.map(function(c){
+    var active = galleryFilter===c;
+    return '<button onclick="setFilter(\''+c+'\')" style="padding:8px 18px;border-radius:var(--radius-full);font-size:.875rem;font-weight:500;cursor:pointer;border:1px solid var(--g200);'
+      + (active ? 'background:#000;color:#fff;border-color:#000;' : 'background:#fff;color:var(--g600);')
+      + '">'+(c.charAt(0).toUpperCase()+c.slice(1))+'</button>';
+  }).join('');
+
+  var filtered = galleryFilter==='all' ? gallery : gallery.filter(function(g){ return g.service===galleryFilter; });
+  var items = filtered.map(function(g){
+    var inner = g.fileData
+      ? (g.type==='video'
+          ? '<video src="'+g.fileData+'" style="width:100%;height:100%;object-fit:cover;"></video>'
+          : '<img src="'+g.fileData+'" alt="'+g.fileName+'" style="width:100%;height:100%;object-fit:cover;" loading="lazy">')
+      : '<div style="width:100%;height:100%;background:linear-gradient(135deg,var(--p100),var(--p300));"></div>';
+    return '<div class="masonry-item" style="border-radius:var(--radius-lg);overflow:hidden;cursor:pointer;box-shadow:var(--shadow-sm);" onclick="openGalleryItem('+g.id+')">'
+      + '<div style="position:relative;">'
+      + inner
+      + '<div style="position:absolute;bottom:8px;left:8px;background:rgba(0,0,0,.5);color:#fff;font-size:.7rem;padding:3px 8px;border-radius:var(--radius-full);">'+g.service+'</div>'
+      + '</div>'
+      + '</div>';
+  }).join('');
+
+  return '<section style="padding:64px 24px;background:linear-gradient(to bottom,var(--p50),#fff);min-height:60vh;">'
+    + '<div style="max-width:80rem;margin:0 auto;">'
+    + '<div style="text-align:center;margin-bottom:40px;">'
+    + '<span style="color:var(--p500);font-size:.8rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;">Portfolio</span>'
+    + '<h1 style="font-family:\'Playfair Display\',serif;font-size:2.5rem;font-weight:600;margin-top:8px;">Nail Art Gallery</h1>'
+    + '</div>'
+    + '<div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:36px;">'+tabs+'</div>'
+    + (filtered.length ? '<div class="masonry">'+items+'</div>' : '<p style="text-align:center;color:var(--g400);padding:48px;">No items in this category.</p>')
+    + '</div></section>';
+}
+
+/* =====================================================================
+   LOGIN PAGE
+   ===================================================================== */
+function renderLogin() {
+  var banner = '';
+  if (loginLoading) {
+    banner = '<div style="background:#FFF8F3;border:1px solid var(--p200);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;gap:12px;margin-bottom:20px;">'
+      + '<div class="spinner"></div>'
+      + '<span style="font-size:.875rem;color:var(--p700);font-weight:500;">Signing you in...</span>'
+      + '</div>';
+  } else if (loginErr) {
+    banner = '<div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:var(--radius);padding:14px 16px;display:flex;align-items:flex-start;gap:10px;margin-bottom:20px;">'
+      + '<svg style="flex-shrink:0;margin-top:1px;" width="16" height="16" fill="none" stroke="#DC2626" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'
+      + '<span style="font-size:.82rem;color:#991B1B;line-height:1.5;">'+loginErr+'</span>'
+      + '</div>';
+  }
+
+  var disAttr   = loginLoading ? 'disabled' : '';
+  var inputBg   = loginLoading ? 'var(--g100)' : '#fff';
+  var btnLabel  = loginLoading ? 'Signing in...' : 'Sign In';
+
+  return '<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--p50) 0%,#fff 50%,var(--p50) 100%);padding:24px;position:relative;overflow:hidden;">'
+    + '<div style="position:absolute;top:-80px;right:-80px;width:300px;height:300px;background:radial-gradient(circle,var(--p200),transparent);opacity:.45;pointer-events:none;"></div>'
+    + '<div style="position:absolute;bottom:-60px;left:-60px;width:250px;height:250px;background:radial-gradient(circle,var(--p300),transparent);opacity:.3;pointer-events:none;"></div>'
+    + '<div style="width:100%;max-width:420px;position:relative;z-index:1;">'
+    + '<div style="text-align:center;margin-bottom:28px;">'
+    + '<div style="width:72px;height:72px;background:linear-gradient(135deg,var(--p200),var(--p500));border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;box-shadow:0 8px 32px rgba(255,153,92,.35);">'
+    + svgIcon('<path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>','')
+    + '</div>'
+    + '<h1 style="font-family:\'Playfair Display\',serif;font-size:1.875rem;font-weight:600;color:#000;margin:0 0 6px;">Fidelis Admin</h1>'
+    + '<p style="color:var(--g400);font-size:.875rem;margin:0;">Sign in to manage your salon</p>'
+    + '</div>'
+    + '<div style="background:#fff;border-radius:var(--radius-2xl);padding:36px;box-shadow:var(--shadow-xl);border:1px solid var(--g100);">'
+    + banner
+    + '<form id="login-form" style="display:flex;flex-direction:column;gap:18px;">'
+    + '<div>'
+    + '<label style="display:block;font-size:.8rem;font-weight:600;color:var(--g700);margin-bottom:6px;">Email Address</label>'
+    + '<input type="email" id="login-email" placeholder="your@email.com" autocomplete="email" '+disAttr+' style="width:100%;padding:12px 14px;border:1.5px solid var(--g300);border-radius:var(--radius);font-size:.95rem;background:'+inputBg+';transition:border-color .15s;" onfocus="this.style.borderColor=\'var(--p400)\'" onblur="this.style.borderColor=\'var(--g300)\'">'
+    + '</div>'
+    + '<div>'
+    + '<label style="display:block;font-size:.8rem;font-weight:600;color:var(--g700);margin-bottom:6px;">Password</label>'
+    + '<input type="password" id="login-password" placeholder="Enter your password" autocomplete="current-password" '+disAttr+' style="width:100%;padding:12px 14px;border:1.5px solid var(--g300);border-radius:var(--radius);font-size:.95rem;background:'+inputBg+';transition:border-color .15s;" onfocus="this.style.borderColor=\'var(--p400)\'" onblur="this.style.borderColor=\'var(--g300)\'">'
+    + '</div>'
+    + '<button type="submit" id="login-btn" '+disAttr+' style="width:100%;padding:13px;background:'+(loginLoading?'var(--g400)':'#000')+';color:#fff;border-radius:var(--radius);font-weight:600;font-size:.95rem;border:none;cursor:'+(loginLoading?'not-allowed':'pointer')+';box-shadow:var(--shadow);">'+btnLabel+'</button>'
+    + '</form>'
+    + '<div style="margin-top:16px;border-top:1px solid var(--g100);padding-top:16px;">'
+    + '<button onclick="view=\'public\';render()" style="width:100%;padding:11px;background:var(--g100);color:var(--g700);border-radius:var(--radius);font-weight:500;font-size:.875rem;border:none;cursor:pointer;">Back to Site</button>'
+    + '</div>'
+    + '</div>'
+    + '<p style="text-align:center;margin-top:16px;font-size:.75rem;color:var(--g400);">Fidelis Nail Parlour - Admin Portal</p>'
+    + '</div>'
+    + '</div>';
+}
+
+/* =====================================================================
+   ADMIN DASHBOARD
+   ===================================================================== */
+function renderAdmin() {
+  var mleft = sidebarOpen ? '220px' : '56px';
+  return '<div style="display:flex;min-height:100vh;background:var(--g50);">'
+    + renderSidebar()
+    + '<div style="flex:1;display:flex;flex-direction:column;overflow:hidden;" class="md-flex" id="admin-main">'
+    + '<style>@media(min-width:768px){#admin-main{margin-left:'+mleft+'}}@media(max-width:767px){#admin-main{margin-left:0}}</style>'
+    + renderAdminHeader()
+    + '<main style="flex:1;overflow-y:auto;padding:16px;padding-bottom:72px;" class="scroll-thin">'
+    + getAdminPageContent()
+    + '</main>'
+    + '</div>'
+    + renderMobileNav()
+    + (showModal ? renderModal() : '')
+    + '</div>';
+}
+
+function renderSidebar() {
+  var items = [
+    {id:'dashboard',label:'Dashboard',icon:'<path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>'},
+    {id:'bookings', label:'Bookings',  icon:'<rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>'},
+    {id:'staff',    label:'Staff',     icon:'<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>'},
+    {id:'services', label:'Services',  icon:'<path d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>'},
+    {id:'gallery',  label:'Gallery',   icon:'<rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>'},
+    {id:'inventory',label:'Inventory', icon:'<path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>'},
+    {id:'analytics', label:'Analytics',    icon:'<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>'},
+    {id:'svcimages', label:'Svc Images',   icon:'<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/><line x1="12" y1="5" x2="12" y2="11"/><line x1="9" y1="8" x2="15" y2="8"/>'},
+    {id:'settings',  label:'Settings',     icon:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/>'}
+  ];
+
+  var navItems = items.map(function(item){
+    var active = adminPage===item.id;
+    var bg = active ? 'background:var(--p200);color:#000;' : 'color:var(--g400);';
+    return '<button onclick="setAdminPage(\''+item.id+'\')" style="width:100%;display:flex;align-items:center;gap:8px;padding:8px '+(sidebarOpen?'12px':'8px')+';border-radius:var(--radius);cursor:pointer;border:none;font-family:inherit;font-size:.8rem;font-weight:500;margin-bottom:1px;transition:.15s;'+bg+'">'
+      + svgIcon(item.icon,'')
+      + (sidebarOpen ? '<span>'+item.label+'</span>' : '')
+      + '</button>';
+  }).join('');
+
+  return '<aside class="hide-mobile" style="position:fixed;top:0;left:0;height:100vh;width:'+(sidebarOpen?'220px':'56px')+';background:#000;color:#fff;display:flex;flex-direction:column;z-index:40;transition:width .2s;">'
+    + '<div style="padding:20px '+(sidebarOpen?'20px':'14px')+';border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:12px;">'
+    + '<div style="width:30px;height:30px;background:linear-gradient(135deg,var(--p200),var(--p400));border-radius:var(--radius);display:flex;align-items:center;justify-content:center;flex-shrink:0;">'
+    + svgIcon('<path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>','')
+    + '</div>'
+    + (sidebarOpen ? '<span style="font-family:\'Playfair Display\',serif;font-size:1rem;font-weight:600;">Fidelis Admin</span>' : '')
+    + '</div>'
+    + '<nav style="flex:1;padding:12px;overflow-y:auto;" class="scroll-thin">'+navItems+'</nav>'
+    + '<div style="padding:12px;border-top:1px solid rgba(255,255,255,.08);">'
+    + '<button onclick="doLogout()" style="width:100%;display:flex;align-items:center;gap:12px;padding:11px 16px;border-radius:var(--radius);cursor:pointer;border:none;color:var(--g400);font-size:.875rem;background:none;font-family:inherit;">'
+    + svgIcon('<path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>','')
+    + (sidebarOpen ? '<span>Logout</span>' : '')
+    + '</button>'
+    + '</div>'
+    + '</aside>';
+}
+
+function renderAdminHeader() {
+  var backBtn = '<button onclick="go(\'home\')" class="md-hidden" style="display:flex;align-items:center;gap:3px;padding:5px 10px;background:#000;color:#fff;border:none;border-radius:20px;cursor:pointer;font-size:.7rem;font-weight:600;">'
+    + '<svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>'
+    + 'Site</button>';
+  var toggleBtn = '<button onclick="sidebarOpen=!sidebarOpen;render()" class="hide-mobile" style="padding:5px;border-radius:6px;background:none;border:none;cursor:pointer;color:var(--g600);">'
+    + '<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>'
+    + '</button>';
+  var logoutDesktop = '<button onclick="doLogout()" class="hide-mobile" style="font-size:.7rem;color:var(--g400);background:none;border:none;cursor:pointer;">Logout</button>';
+  var logoutMobile  = '<button onclick="doLogout()" class="md-hidden" style="padding:5px;background:none;border:none;cursor:pointer;color:var(--g400);">'
+    + '<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>'
+    + '</button>';
+  var avatar = '<div style="width:28px;height:28px;background:linear-gradient(135deg,var(--p200),var(--p400));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;">' + initials(adminName) + '</div>';
+  var nameSpan = '<span class="hide-mobile" style="font-size:.75rem;font-weight:500;color:#000;">' + adminName + '</span>';
+  var title = '<span class="hide-mobile" style="font-size:.8rem;font-weight:700;color:#000;">' + config.salon_name + '</span>';
+  return '<header style="background:#fff;border-bottom:1px solid var(--g200);padding:0 12px;height:46px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">'
+    + '<div style="display:flex;align-items:center;gap:8px;">' + toggleBtn + backBtn + title + '</div>'
+    + '<div style="display:flex;align-items:center;gap:8px;">' + avatar + nameSpan + logoutDesktop + logoutMobile + '</div>'
+    + '</header>';
+}
+function renderMobileNav() {
+  var items = [
+    {id:'dashboard',label:'Home',    icon:'<path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>'},
+    {id:'bookings', label:'Book',    icon:'<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>'},
+    {id:'services', label:'Svcs',    icon:'<path d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>'},
+    {id:'gallery',  label:'Gallery', icon:'<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>'},
+    {id:'staff',    label:'Staff',   icon:'<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/>'},
+    {id:'inventory',label:'Stock',   icon:'<path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>'},
+    {id:'analytics',label:'Stats',   icon:'<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>'},
+    {id:'svcimages',label:'SvcImg',  icon:'<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>'},
+    {id:'settings', label:'Config',  icon:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/>'}
+  ];
+  var html = '<nav style="position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #E8E8E8;display:flex;z-index:9999;box-shadow:0 -2px 12px rgba(0,0,0,.08);" class="md-hidden">';
+  for (var i = 0; i < items.length; i++) {
+    var item   = items[i];
+    var active = adminPage === item.id;
+    var pg     = item.id;
+    html += '<button onclick="setAdminPage(this.getAttribute(\'data-pg\'))" data-pg="' + pg + '" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px 2px 8px;border:none;background:' + (active ? 'var(--p50)' : 'transparent') + ';cursor:pointer;color:' + (active ? 'var(--p600)' : 'var(--g500)') + ';font-size:.55rem;font-weight:' + (active ? '700' : '500') + ';font-family:inherit;border-top:2px solid ' + (active ? 'var(--p400)' : 'transparent') + ';">'
+      + '<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">' + item.icon + '</svg>'
+      + '<span>' + item.label + '</span>'
+      + '</button>';
+  }
+  html += '</nav>';
+  return html;
+}
+/* --- ADMIN PAGE CONTENTS --- */
+function getAdminPageContent() {
+  if (adminPage==='dashboard')  return renderDashboard();
+  if (adminPage==='bookings')   return renderBookingsMgmt();
+  if (adminPage==='staff')      return renderStaffMgmt();
+  if (adminPage==='services')   return renderServicesMgmt();
+  if (adminPage==='svcimages')  return renderServiceImages();
+  if (adminPage==='gallery')    return renderGalleryMgmt();
+  if (adminPage==='inventory')  return renderInventoryMgmt();
+  if (adminPage==='analytics')  return renderAnalytics();
+  if (adminPage==='settings')   return renderSalonSettings();
+  return '';
+}
+
+function renderDashboard() {
+  var completed = bookings.filter(function(b){ return b.status==='completed'; });
+  var pending   = bookings.filter(function(b){ return b.status==='pending'; });
+  var revenue   = completed.reduce(function(s,b){ return s+(b.fullPrice||0); },0);
+  var deposits  = pending.reduce(function(s,b){ return s+((b.fullPrice||0)*0.5); },0);
+  var lowStock  = inventory.filter(function(i){ return i.status==='low'; }).length;
+
+  var stats = [
+    {label:"Revenue",      val:kes(revenue),      bg:'#ECFDF5',color:'#059669',
+     icon:'<line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>'},
+    {label:"Deposits Due", val:kes(deposits),      bg:'#EFF6FF',color:'#2563EB',
+     icon:'<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>'},
+    {label:"Bookings",     val:bookings.length,    bg:'#FFF7ED',color:'#EA580C',
+     icon:'<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>'},
+    {label:"Low Stock",    val:lowStock,            bg:'#FEF2F2',color:'#DC2626',
+     icon:'<path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>'}
+  ].map(function(s){
+    return '<div class="adm-card">'
+      + '<div class="adm-stat-icon" style="background:'+s.bg+';color:'+s.color+';">'
+      + '<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">'+s.icon+'</svg>'
+      + '</div>'
+      + '<div class="adm-label">'+s.label+'</div>'
+      + '<div class="adm-val">'+s.val+'</div>'
+      + '</div>';
+  }).join('');
+
+  var recentRows = bookings.slice(0,5).map(function(b){
+    var sc = STATUS_COLORS[b.status||'pending'] || 'background:var(--g100);color:var(--g700)';
+    return '<tr>'
+      + '<td class="adm-td" style="font-weight:600;">'+(b.client||'-')+'</td>'
+      + '<td class="adm-td" style="color:var(--g500);max-width:90px;overflow:hidden;text-overflow:ellipsis;">'+(b.service||'-')+'</td>'
+      + '<td class="adm-td"><span class="adm-badge" style="'+sc+'">'+(STATUS_LABELS[b.status]||'-')+'</span></td>'
+      + '</tr>';
+  }).join('');
+
+  return '<div style="display:flex;flex-direction:column;gap:10px;padding-bottom:72px;" class="fade-in">'
+    + '<div class="adm-grid-2">'+stats+'</div>'
+    + '<div class="adm-section">'
+    + '<div class="adm-row" style="border-bottom:1px solid #F0F0F0;">'
+    + '<span style="font-size:.82rem;font-weight:700;">Recent Bookings</span>'
+    + '<button onclick="setAdminPage(this.getAttribute(\'data-p\'))" data-p="bookings" style="font-size:.72rem;color:var(--p600);background:none;border:none;cursor:pointer;font-weight:600;">View All</button>'
+    + '</div>'
+    + '<div style="overflow-x:auto;">'
+    + '<table style="width:100%;"><thead style="background:var(--g50);"><tr>'
+    + ['Client','Service','Status'].map(function(h){ return '<th class="adm-th">'+h+'</th>'; }).join('')
+    + '</tr></thead><tbody>'
+    + (recentRows || '<tr><td colspan="3" style="padding:20px;text-align:center;color:var(--g400);font-size:.78rem;">No bookings yet</td></tr>')
+    + '</tbody></table>'
+    + '</div></div></div>';
+}
+function renderBookingsMgmt() {
+  var rows = bookings.map(function(b){
+    var sc = STATUS_COLORS[b.status||'pending'] || 'background:var(--g100);color:var(--g700)';
+    var actions = '';
+    if (b.status==='pending') {
+      actions = '<button class="adm-btn-sm" onclick="updateStatus('+b.id+',\'approved\')" style="background:#DCFCE7;color:#15803D;">OK</button>'
+              + '<button class="adm-btn-sm" onclick="updateStatus('+b.id+',\'cancelled\')" style="background:#FEE2E2;color:#991B1B;margin-left:4px;">X</button>';
+    } else if (b.status==='approved') {
+      actions = '<button class="adm-btn-sm" onclick="updateStatus('+b.id+',\'completed\')" style="background:#D1FAE5;color:#047857;">Done</button>'
+              + '<button class="adm-btn-sm" onclick="updateStatus('+b.id+',\'no_show\')" style="background:#FEE2E2;color:#991B1B;margin-left:4px;">NS</button>';
+    } else if (b.status==='deposit_paid') {
+      actions = '<button class="adm-btn-sm" onclick="updateStatus('+b.id+',\'approved\')" style="background:#DCFCE7;color:#15803D;">OK</button>';
+    } else {
+      actions = '<span style="font-size:.7rem;color:var(--g300);">-</span>';
+    }
+    return '<tr style="border-bottom:1px solid #F5F5F5;">'
+      + '<td class="adm-td" style="font-weight:600;">'+(b.client||'-')+'</td>'
+      + '<td class="adm-td" style="color:var(--g500);">'+(b.service||'-')+'</td>'
+      + '<td class="adm-td" style="color:var(--g500);">'+(b.date||'-')+'</td>'
+      + '<td class="adm-td"><span class="adm-badge" style="'+sc+'">'+(STATUS_LABELS[b.status]||'-')+'</span></td>'
+      + '<td class="adm-td">'+actions+'</td>'
+      + '</tr>';
+  }).join('');
+
+  return '<div class="fade-in" style="padding-bottom:72px;">'
+    + '<div class="adm-page-hdr"><div><div class="adm-page-title">Bookings</div><div class="adm-page-sub">'+bookings.length+' total</div></div></div>'
+    + '<div class="adm-section"><div style="overflow-x:auto;">'
+    + '<table style="width:100%;"><thead style="background:var(--g50);"><tr>'
+    + ['Client','Service','Date','Status',''].map(function(h){ return '<th class="adm-th">'+h+'</th>'; }).join('')
+    + '</tr></thead><tbody>'
+    + (rows || '<tr><td colspan="5" style="padding:24px;text-align:center;color:var(--g400);font-size:.78rem;">No bookings yet.</td></tr>')
+    + '</tbody></table></div></div></div>';
+}
+function actionBtn(bg, color) {
+  return 'padding:5px 10px;border-radius:var(--radius-sm);font-size:.75rem;font-weight:600;cursor:pointer;border:none;background:'+bg+';color:'+color+';';
+}
+
+function renderStaffMgmt() {
+  var rows = staff.map(function(m){
+    var roleBg = m.role==='owner' ? '#F3E8FF;color:#7C3AED' : '#DBEAFE;color:#1D4ED8';
+    return '<div class="adm-staff-row">'
+      + '<div style="display:flex;align-items:center;gap:10px;min-width:0;">'
+      + '<div class="adm-avatar">'+initials(m.name)+'</div>'
+      + '<div style="min-width:0;">'
+      + '<div style="font-size:.82rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+(m.name||'-')+'</div>'
+      + '<span class="adm-badge" style="background:'+roleBg+';">'+(m.role||'staff')+'</span>'
+      + '</div></div>'
+      + '<div style="display:flex;gap:5px;flex-shrink:0;">'
+      + '<button class="adm-btn-sm" onclick="openModalById(\'editStaff\',this.getAttribute(\'data-id\'))" data-id="'+m.id+'" style="background:var(--g100);color:var(--g700);">Edit</button>'
+      + '<button class="adm-btn-sm" onclick="deleteStaff('+m.id+')" style="background:#FEE2E2;color:#991B1B;">Del</button>'
+      + '</div></div>';
+  }).join('');
+
+  return '<div class="fade-in" style="padding-bottom:72px;">'
+    + '<div class="adm-page-hdr">'
+    + '<div><div class="adm-page-title">Staff</div><div class="adm-page-sub">'+staff.length+' members</div></div>'
+    + '<button class="adm-add-btn" onclick="openModal(\'addStaff\')">+ Add</button>'
+    + '</div>'
+    + '<div class="adm-section">'
+    + (staff.length ? rows : '<div style="padding:24px;text-align:center;color:var(--g400);font-size:.78rem;">No staff added yet.</div>')
+    + '</div></div>';
+}
+function renderServicesMgmt() {
+  var rows = services.map(function(s){
+    return '<div class="adm-row">'
+      + '<div style="min-width:0;flex:1;">'
+      + '<div style="font-size:.82rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+(s.name||'-')+'</div>'
+      + '<div style="font-size:.7rem;color:var(--g400);margin-top:1px;">'+(s.category||'-')+' &bull; '+(s.duration||'-')+'</div>'
+      + '</div>'
+      + '<div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">'
+      + '<span style="font-size:.82rem;font-weight:700;color:var(--p600);">'+kes(s.price)+'</span>'
+      + '<button class="adm-btn-sm" onclick="openModalById(\'editService\',this.getAttribute(\'data-id\'))" data-id="'+s.id+'" style="background:var(--g100);color:var(--g700);">Edit</button>'
+      + '<button class="adm-btn-sm" onclick="deleteService('+s.id+')" style="background:#FEE2E2;color:#991B1B;">Del</button>'
+      + '</div></div>';
+  }).join('');
+
+  return '<div class="fade-in" style="padding-bottom:72px;">'
+    + '<div class="adm-page-hdr">'
+    + '<div><div class="adm-page-title">Services</div><div class="adm-page-sub">'+services.length+' services</div></div>'
+    + '<button class="adm-add-btn" onclick="openModal(\'addService\')">+ Add</button>'
+    + '</div>'
+    + '<div class="adm-section">'
+    + (services.length ? rows : '<div style="padding:24px;text-align:center;color:var(--g400);font-size:.78rem;">No services added yet.</div>')
+    + '</div></div>';
+}
+function renderGalleryMgmt() {
+  var items = gallery.map(function(g){
+    var inner = g.fileData
+      ? (g.type==='video'
+          ? '<video src="'+g.fileData+'" style="width:100%;height:100%;object-fit:cover;"></video>'
+          : '<img src="'+g.fileData+'" style="width:100%;height:100%;object-fit:cover;" loading="lazy">')
+      : '<div style="width:100%;height:100%;background:linear-gradient(135deg,var(--p100),var(--p300));"></div>';
+    return '<div class="adm-gal-item">'
+      + inner
+      + '<button class="adm-gal-del" onclick="deleteGalleryItem('+g.id+')">'
+      + '<svg width="10" height="10" fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
+      + '</button>'
+      + '<div style="position:absolute;bottom:3px;left:4px;font-size:.55rem;background:rgba(0,0,0,.55);color:#fff;padding:1px 5px;border-radius:3px;">'+( g.service||'')+'</div>'
+      + '</div>';
+  }).join('');
+
+  return '<div class="fade-in" style="padding-bottom:72px;">'
+    + '<div class="adm-page-hdr">'
+    + '<div><div class="adm-page-title">Gallery</div><div class="adm-page-sub">'+gallery.length+' items</div></div>'
+    + '<div style="display:flex;gap:6px;">'
+    + '<button class="adm-add-btn" onclick="openModal(\'uploadImage\')" style="background:var(--g200);color:#000;">+ Photo</button>'
+    + '<button class="adm-add-btn" onclick="openModal(\'uploadVideo\')">+ Video</button>'
+    + '</div></div>'
+    + (gallery.length
+        ? '<div class="adm-gal-grid">'+items+'</div>'
+        : '<div class="adm-section" style="padding:24px;text-align:center;color:var(--g400);font-size:.78rem;">No items yet. Upload your first photo or video.</div>')
+    + '</div>';
+}
+function renderInventoryMgmt() {
+  var lowCount = inventory.filter(function(i){ return i.status==='low'; }).length;
+
+  var rows = inventory.map(function(item){
+    var isLow = item.status==='low';
+    return '<div class="adm-row">'
+      + '<div style="min-width:0;flex:1;">'
+      + '<div style="font-size:.82rem;font-weight:600;">'+(item.name||'-')+'</div>'
+      + '<div style="font-size:.7rem;color:var(--g400);margin-top:1px;">Threshold: '+(item.threshold||0)+'</div>'
+      + '</div>'
+      + '<div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">'
+      + '<span style="font-size:.85rem;font-weight:700;color:'+(isLow?'#DC2626':'#15803D')+';">'+(item.stock||0)+'</span>'
+      + '<span class="adm-badge" style="background:'+(isLow?'#FEE2E2;color:#991B1B':'#DCFCE7;color:#15803D')+'">'+(isLow?'Low':'OK')+'</span>'
+      + '<button class="adm-btn-sm" onclick="deleteInventory('+item.id+')" style="background:#FEE2E2;color:#991B1B;">Del</button>'
+      + '</div></div>';
+  }).join('');
+
+  return '<div class="fade-in" style="padding-bottom:72px;">'
+    + '<div class="adm-page-hdr">'
+    + '<div><div class="adm-page-title">Inventory</div><div class="adm-page-sub">'+inventory.length+' items'+(lowCount>0?' &bull; <span style="color:#DC2626;">'+lowCount+' low</span>':'')+'</div></div>'
+    + '<button class="adm-add-btn" onclick="openModal(\'addInventory\')">+ Add</button>'
+    + '</div>'
+    + '<div class="adm-section">'
+    + (inventory.length ? rows : '<div style="padding:24px;text-align:center;color:var(--g400);font-size:.78rem;">No items yet.</div>')
+    + '</div></div>';
+}
+function renderAnalytics() {
+  var completed = bookings.filter(function(b){ return b.status==='completed'; }).length;
+  var total     = bookings.length;
+  var rate      = total>0 ? Math.round((completed/total)*100) : 0;
+  var revenue   = bookings.filter(function(b){ return b.status==='completed'; }).reduce(function(s,b){ return s+(b.fullPrice||0); },0);
+
+  var stats = [
+    {label:'Bookings',      val:total},
+    {label:'Completed',     val:completed},
+    {label:'Success Rate',  val:rate+'%'},
+    {label:'Revenue',       val:kes(revenue)},
+    {label:'Services',      val:services.length},
+    {label:'Staff',         val:staff.length},
+    {label:'Gallery Items', val:gallery.length},
+    {label:'Low Stock',     val:inventory.filter(function(i){return i.status==='low';}).length}
+  ].map(function(s){
+    return '<div class="adm-card" style="text-align:center;">'
+      + '<div class="adm-val" style="font-size:1.25rem;margin-bottom:2px;">'+s.val+'</div>'
+      + '<div class="adm-label">'+s.label+'</div>'
+      + '</div>';
+  }).join('');
+
+  return '<div class="fade-in" style="padding-bottom:72px;">'
+    + '<div class="adm-page-hdr"><div><div class="adm-page-title">Analytics</div><div class="adm-page-sub">Business overview</div></div></div>'
+    + '<div class="adm-grid-2" style="grid-template-columns:repeat(2,1fr)!important;">'+stats+'</div>'
+    + '</div>';
+}
+function pageHeader(title, subtitle) {
+  return '<div>'
+    + '<h2 style="font-size:1.1rem;font-weight:600;color:#000;">'+title+'</h2>'
+    + '<p style="color:var(--g400);font-size:.78rem;margin-top:1px;">'+subtitle+'</p>'
+    + '</div>';
+}
+function addBtn(bg, color) {
+  bg    = bg    || '#000';
+  color = color || '#fff';
+  return 'padding:10px 18px;background:'+bg+';color:'+color+';border-radius:var(--radius);font-size:.875rem;font-weight:500;border:none;cursor:pointer;box-shadow:var(--shadow-sm);';
+}
+
+/* =====================================================================
+   MODALS
+   ===================================================================== */
+function renderModal() {
+  var title   = '';
+  var body    = '';
+  var cats    = ['polish','gel','extensions','art','care','removal','combo'];
+
+  if (modalType==='bookingConfirmation') {
+    title = 'Booking Submitted!';
+    body  = '<div style="text-align:center;">'
+      + '<div style="width:72px;height:72px;background:#DCFCE7;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;">'
+      + svgIcon('<polyline points="20 6 9 17 4 12"/>','')+'</div>'
+      + '<h3 style="font-size:1.25rem;font-weight:600;margin-bottom:8px;">Thank You!</h3>'
+      + '<p style="color:var(--g500);margin-bottom:24px;">Your booking has been submitted. We will contact you shortly with payment details for your deposit.</p>'
+      + '<button onclick="closeModal()" style="'+addBtn()+'width:100%;padding:12px;">Done</button>'
+      + '</div>';
+  }
+
+  else if (modalType==='gallery') {
+    title = 'Gallery View';
+    var gItem = gallery.find(function(g){ return g.id===modalData; });
+    if (gItem) {
+      var gContent = gItem.fileData
+        ? (gItem.type==='video'
+            ? '<video src="'+gItem.fileData+'" controls style="width:100%;border-radius:var(--radius);margin-bottom:12px;"></video>'
+            : '<img src="'+gItem.fileData+'" style="width:100%;border-radius:var(--radius);margin-bottom:12px;" loading="lazy">')
+        : '<div style="width:100%;height:200px;background:linear-gradient(135deg,var(--p100),var(--p300));border-radius:var(--radius);margin-bottom:12px;"></div>';
+      body = gContent + '<p style="color:var(--g500);font-size:.875rem;text-align:center;">'+gItem.service+'</p>';
+    }
+  }
+
+  else if (modalType==='addStaff' || modalType==='editStaff') {
+    title = modalType==='addStaff' ? 'Add Staff Member' : 'Edit Staff Member';
+    var sd = modalData || {};
+    body  = '<form id="modal-staff-form" style="display:flex;flex-direction:column;gap:16px;">'
+      + modalInput('text','ms-name','Full Name',sd.name||'','Full name')
+      + modalInput('email','ms-email','Email',sd.email||'','email@example.com')
+      + modalInput('tel','ms-phone','Phone',sd.phone||'','+254 7XX XXX XXX')
+      + '<div>'
+      + '<label style="display:block;font-size:.8rem;font-weight:600;color:var(--g700);margin-bottom:6px;">Role</label>'
+      + '<select id="ms-role" style="width:100%;padding:11px 14px;border:1.5px solid var(--g300);border-radius:var(--radius);font-size:.95rem;">'
+      + '<option value="staff" '+(sd.role==='staff'?'selected':'')+'>Staff</option>'
+      + '<option value="owner" '+(sd.role==='owner'?'selected':'')+'>Owner</option>'
+      + '</select></div>'
+      + modalInput('text','ms-branch','Branch',sd.branch||'','e.g. Westlands')
+      + modalFooter(modalType==='addStaff'?'Add Staff':'Save Changes')
+      + '</form>';
+  }
+
+  else if (modalType==='addService' || modalType==='editService') {
+    title = modalType==='addService' ? 'Add Service' : 'Edit Service';
+    var sv = modalData || {};
+    body  = '<form id="modal-service-form" style="display:flex;flex-direction:column;gap:16px;">'
+      + modalInput('text','msv-name','Service Name',sv.name||'','e.g. Gel Polish')
+      + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">'
+      + modalInput('number','msv-price','Price (KES)',sv.price||'','0')
+      + modalInput('text','msv-duration','Duration',sv.duration||'','e.g. 60 mins')
+      + '</div>'
+      + '<div>'
+      + '<label style="display:block;font-size:.8rem;font-weight:600;color:var(--g700);margin-bottom:6px;">Category</label>'
+      + '<select id="msv-cat" style="width:100%;padding:11px 14px;border:1.5px solid var(--g300);border-radius:var(--radius);font-size:.95rem;">'
+      + '<option value="">Select category...</option>'
+      + cats.map(function(c){ return '<option value="'+c+'" '+(sv.category===c?'selected':'')+'>'+c.charAt(0).toUpperCase()+c.slice(1)+'</option>'; }).join('')
+      + '</select></div>'
+      + modalFooter(modalType==='addService'?'Add Service':'Save Changes')
+      + '</form>';
+  }
+
+  else if (modalType==='uploadImage' || modalType==='uploadVideo') {
+    title = modalType==='uploadImage' ? 'Upload Image' : 'Upload Video';
+    var accept = modalType==='uploadImage' ? 'image/*' : 'video/*';
+    var hint   = modalType==='uploadImage' ? 'PNG, JPG up to 10MB' : 'MP4, MOV up to 50MB';
+    body  = '<form id="modal-media-form" style="display:flex;flex-direction:column;gap:16px;">'
+      + '<div style="border:2px dashed var(--g300);border-radius:var(--radius-lg);padding:32px;text-align:center;cursor:pointer;transition:border-color .15s;" onmouseover="this.style.borderColor=\'var(--p400)\'" onmouseout="this.style.borderColor=\'var(--g300)\'">'
+      + '<input type="file" id="media-file-input" accept="'+accept+'" required style="display:none;">'
+      + '<label for="media-file-input" style="cursor:pointer;display:block;">'
+      + '<div style="width:56px;height:56px;background:var(--g100);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;">'
+      + svgIcon('<polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/>','')+'</div>'
+      + '<p id="media-file-label" style="color:var(--g500);font-size:.875rem;margin-bottom:4px;">Click to upload or drag and drop</p>'
+      + '<p style="font-size:.75rem;color:var(--g400);">'+hint+'</p>'
+      + '</label></div>'
+      + '<div><label style="display:block;font-size:.8rem;font-weight:600;color:var(--g700);margin-bottom:6px;">Assign to Service</label>'
+      + '<select id="media-service" style="width:100%;padding:11px 14px;border:1.5px solid var(--g300);border-radius:var(--radius);font-size:.95rem;">'
+      + '<option value="">Select service...</option>'
+      + cats.map(function(c){ return '<option value="'+c+'">'+c.charAt(0).toUpperCase()+c.slice(1)+'</option>'; }).join('')
+      + '</select></div>'
+      + modalFooter('Upload')
+      + '</form>';
+  }
+
+  else if (modalType==='addInventory') {
+    title = 'Add Inventory Item';
+    body  = '<form id="modal-inventory-form" style="display:flex;flex-direction:column;gap:16px;">'
+      + modalInput('text','inv-name','Item Name','','e.g. Gel Base Coat')
+      + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">'
+      + modalInput('number','inv-stock','Stock Level','','0')
+      + modalInput('number','inv-threshold','Low Stock Threshold','','5')
+      + '</div>'
+      + modalFooter('Add Item')
+      + '</form>';
+  }
+
+  return '<div style="position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:16px;" onclick="closeModal()">'
+    + '<div style="position:absolute;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);"></div>'
+    + '<div style="position:relative;background:#fff;border-radius:var(--radius-2xl);width:100%;max-width:480px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-xl);" onclick="event.stopPropagation()">'
+    + '<div style="position:sticky;top:0;background:#fff;padding:20px 24px 16px;border-bottom:1px solid var(--g100);display:flex;align-items:center;justify-content:space-between;border-radius:var(--radius-2xl) var(--radius-2xl) 0 0;">'
+    + '<h2 style="font-weight:600;font-size:1.05rem;">'+title+'</h2>'
+    + '<button onclick="closeModal()" style="padding:6px;border-radius:var(--radius-sm);background:var(--g100);border:none;cursor:pointer;">'+svgIcon('<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>','')+'</button>'
+    + '</div>'
+    + '<div style="padding:24px;">'+body+'</div>'
+    + '</div></div>';
+}
+
+function modalInput(type, id, label, value, placeholder) {
+  return '<div>'
+    + '<label style="display:block;font-size:.8rem;font-weight:600;color:var(--g700);margin-bottom:6px;">'+label+'</label>'
+    + '<input type="'+type+'" id="'+id+'" value="'+value+'" placeholder="'+placeholder+'"'
+    + ' style="width:100%;padding:11px 14px;border:1.5px solid var(--g300);border-radius:var(--radius);font-size:.95rem;transition:border-color .15s;"'
+    + ' onfocus="this.style.borderColor=\'var(--p400)\'" onblur="this.style.borderColor=\'var(--g300)\'">'
+    + '</div>';
+}
+function modalFooter(submitLabel) {
+  return '<div style="display:flex;gap:10px;margin-top:4px;">'
+    + '<button type="button" onclick="closeModal()" style="flex:1;padding:11px;background:var(--g100);color:var(--g700);border-radius:var(--radius);font-weight:500;border:none;cursor:pointer;">Cancel</button>'
+    + '<button type="submit" style="flex:1;padding:11px;background:#000;color:#fff;border-radius:var(--radius);font-weight:500;border:none;cursor:pointer;">'+submitLabel+'</button>'
+    + '</div>';
+}
+
+/* =====================================================================
+   EVENT BINDING (called after every render)
+   ===================================================================== */
+function bindEvents() {
+  /* mobile menu button */
+  var menuBtn = el('menuBtn');
+  if (menuBtn) {
+    menuBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      mobileMenu = !mobileMenu;
+      render();
+    });
+  }
+
+  /* login form */
+  var loginForm = el('login-form');
+  if (loginForm) {
+    loginForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      doLogin_attempt();
+    });
+  }
+
+  /* booking form */
+  var bkForm = el('booking-form');
+  if (bkForm) {
+    bkForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      submitBooking();
+    });
+  }
+
+  /* modal forms */
+  var staffForm = el('modal-staff-form');
+  if (staffForm) staffForm.addEventListener('submit', function(e){ e.preventDefault(); submitStaff(); });
+
+  var svcForm = el('modal-service-form');
+  if (svcForm) svcForm.addEventListener('submit', function(e){ e.preventDefault(); submitService(); });
+
+  var mediaForm = el('modal-media-form');
+  if (mediaForm) mediaForm.addEventListener('submit', function(e){ e.preventDefault(); submitMedia(); });
+
+  var invForm = el('modal-inventory-form');
+  if (invForm) invForm.addEventListener('submit', function(e){ e.preventDefault(); submitInventory(); });
+
+  /* file input label update */
+  var fileInput = el('media-file-input');
+  if (fileInput) {
+    fileInput.addEventListener('change', function() {
+      var lbl = el('media-file-label');
+      if (lbl && this.files && this.files[0]) lbl.textContent = this.files[0].name;
+    });
+  }
+}
+
+/* =====================================================================
+   NAVIGATION ACTIONS
+   ===================================================================== */
+function go(p) {
+  page = p; mobileMenu = false;
+  view = 'public';
+  render();
+  window.scrollTo(0,0);
+}
+function goAdmin() {
+  view = 'admin'; loggedIn = false; loginErr = ''; loginLoading = false;
+  render();
+  window.scrollTo(0,0);
+}
+function setAdminPage(p) { adminPage = p; render(); }
+function setFilter(f)    { galleryFilter = f; render(); }
+function openModal(type, data) { showModal=true; modalType=type; modalData=data||null; render(); }
+function closeModal()          { showModal=false; modalType=''; modalData=null; render(); }
+function openModalById(type, id) {
+  var data = null;
+  if (type==='editStaff')   data = staff.find(function(s){ return s.id===id; })||null;
+  if (type==='editService') data = services.find(function(s){ return s.id===id; })||null;
+  openModal(type, data);
+}
+function openGalleryItem(id) { openModal('gallery', id); }
+function updateBk(field, val) { bookingForm[field]=val; }
+function bookNow(svcId) { bookingForm.service=svcId; go('booking'); }
+
+/* =====================================================================
+   LOGIN
+   ===================================================================== */
+function doLogin_attempt() {
+  var emailEl = el('login-email');
+  var passEl  = el('login-password');
+  if (!emailEl || !passEl) { loginErr='Form error - please reload'; render(); return; }
+
+  var email = emailEl.value.trim().toLowerCase();
+  var pass  = passEl.value;
+
+  if (!email || !pass) { loginErr='Please enter your email and password'; render(); return; }
+
+  loginErr = ''; loginLoading = true; render();
+
+  /* SHA-256 via SubtleCrypto */
+  /* Check 1: direct password match from config.js */
+  if (ADMIN_EMAIL && email === ADMIN_EMAIL && ADMIN_PASS && pass === ADMIN_PASS) {
+    finishLogin('Admin', 'Manager');
+    if (db) db.auth.signInWithPassword({ email: email, password: pass }).catch(function(){});
+    return;
+  }
+
+  /* Check 2: SHA-256 hash match (fallback if ADMIN_PASS not set) */
+  if (ADMIN_EMAIL && ADMIN_HASH && ADMIN_SALT && crypto && crypto.subtle) {
+    var enc  = new TextEncoder();
+    crypto.subtle.digest('SHA-256', enc.encode(pass + ADMIN_SALT)).then(function(buf) {
+      var hex = Array.from(new Uint8Array(buf)).map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
+      if (email === ADMIN_EMAIL && hex === ADMIN_HASH) {
+        finishLogin('Admin', 'Manager');
+        if (db) db.auth.signInWithPassword({ email: email, password: pass }).catch(function(){});
+        return;
+      }
+      trySupabase(email, pass);
+    }).catch(function(){ trySupabase(email, pass); });
+    return;
+  }
+
+  /* Check 3: Supabase auth */
+  trySupabase(email, pass);
+}
+
+function trySupabase(email, pass) {
+  if (!db) {
+    loginLoading = false;
+    loginErr = 'Incorrect email or password';
+    render(); return;
+  }
+  db.auth.signInWithPassword({ email: email, password: pass }).then(function(result) {
+    if (result.error) {
+      loginLoading = false;
+      var msg = result.error.message || 'Incorrect email or password';
+      if (msg.toLowerCase().indexOf('confirm') !== -1) {
+        msg = 'Email not confirmed. In Supabase: Authentication -> Providers -> Email -> disable Confirm email.';
+      }
+      loginErr = msg; render();
+    } else if (result.data && result.data.user) {
+      finishLogin(result.data.user.email.split('@')[0] || 'Admin', 'Manager');
+    } else {
+      loginLoading = false; loginErr = 'Login failed. Check your credentials.'; render();
+    }
+  }).catch(function(err) {
+    loginLoading = false;
+    loginErr = 'Connection error: ' + (err.message || 'Try again');
+    render();
+  });
+}
+
+function finishLogin(name, role) {
+  loggedIn = true; view = 'admin';
+  adminName = name; adminRole = role;
+  loginErr = ''; loginLoading = false;
+  // Persist so admin stays logged in after refresh
+  try {
+    localStorage.setItem('fidelis_admin', JSON.stringify({ name: name, role: role }));
+  } catch(e) {}
+  render();
+  if (db) loadAll();
+}
+
+function doLogout() {
+  loggedIn = false; view = 'public';
+  services=[]; bookings=[]; staff=[]; inventory=[]; gallery=[];
+  try { localStorage.removeItem('fidelis_admin'); } catch(e) {}
+  if (db) db.auth.signOut().catch(function(){});
+  render();
+}
+
+/* =====================================================================
+   SUPABASE DATA LAYER
+   ===================================================================== */
+function loadAll() {
+  if (!db) return;
+  Promise.all([
+    db.from('services').select('*'),
+    db.from('bookings').select('*'),
+    db.from('staff').select('*'),
+    db.from('inventory').select('*'),
+    db.from('gallery').select('*')
+  ]).then(function(results) {
+    var svcRes=results[0], bkRes=results[1], stRes=results[2], invRes=results[3], galRes=results[4];
+
+    if (!svcRes.error  && svcRes.data  && svcRes.data.length  > 0) services  = svcRes.data;
+    if (!stRes.error   && stRes.data   && stRes.data.length   > 0) staff     = stRes.data;
+    if (!invRes.error  && invRes.data  && invRes.data.length  > 0) inventory = invRes.data;
+
+    if (!bkRes.error && bkRes.data && bkRes.data.length > 0) {
+      bookings = bkRes.data.map(function(b) {
+        return {
+          id:          b.id,
+          client:      b.client_name  || b.client      || '',
+          phone:       b.client_phone || b.phone        || '',
+          service:     b.service_name || b.service      || '',
+          fullPrice:   b.full_price   || b.fullPrice    || 0,
+          depositPaid: b.deposit_paid || b.depositPaid  || 0,
+          balance:     b.balance      || 0,
+          date:        b.date         || '',
+          time:        b.time         || '',
+          status:      b.status       || 'pending'
+        };
+      });
+    }
+
+    if (!galRes.error && galRes.data && galRes.data.length > 0) {
+      gallery = galRes.data.map(function(g) {
+        return {
+          id:       g.id,
+          type:     g.type     || 'image',
+          service:  g.service  || '',
+          fileName: g.file_name|| g.fileName || '',
+          fileData: g.file_data|| g.fileData || null
+        };
+      });
+    }
+
+    render();
+  }).catch(function(err) {
+    console.error('loadAll error:', err);
+  });
+}
+
+/* Targeted table reloads */
+function reloadServices() {
+  if (!db) return;
+  db.from('services').select('*').then(function(r){
+    if (!r.error && r.data && r.data.length > 0) { services=r.data; render(); }
+  });
+}
+function reloadStaff() {
+  if (!db) return;
+  db.from('staff').select('*').then(function(r){
+    if (!r.error && r.data && r.data.length > 0) { staff=r.data; render(); }
+  });
+}
+function reloadInventory() {
+  if (!db) return;
+  db.from('inventory').select('*').then(function(r){
+    if (!r.error && r.data && r.data.length > 0) { inventory=r.data; render(); }
+  });
+}
+function reloadGallery() {
+  if (!db) return;
+  db.from('gallery').select('*').then(function(r){
+    if (!r.error && r.data && r.data.length > 0) {
+      gallery = r.data.map(function(g){
+        return { id:g.id, type:g.type||'image', service:g.service||'', fileName:g.file_name||'', fileData:g.file_data||null };
+      });
+      render();
+    }
+  });
+}
+
+/* =====================================================================
+   FORM SUBMISSIONS
+   ===================================================================== */
+function submitBooking() {
+  /* Read directly from DOM - avoids state loss when render() fires on service change */
+  var nameVal  = (el('bk-name')    && el('bk-name').value.trim())    || bookingForm.name;
+  var phoneVal = (el('bk-phone')   && el('bk-phone').value.trim())   || bookingForm.phone;
+  var svcVal   = (el('bk-service') && el('bk-service').value)        || bookingForm.service;
+  var dateVal  = (el('bk-date')    && el('bk-date').value)           || bookingForm.date;
+  var timeVal  = (el('bk-time')    && el('bk-time').value)           || bookingForm.time;
+
+  if (!nameVal || !phoneVal || !svcVal || !dateVal || !timeVal) {
+    alert('Please fill in all fields (Name, Phone, Service, Date and Time)'); return;
+  }
+  var svc = services.find(function(s){ return s.id==svcVal || String(s.id)==String(svcVal); });
+  if (!svc) { alert('Please select a valid service'); return; }
+
+  var record = {
+    client_name:  nameVal,
+    client_phone: phoneVal,
+    service_name: svc.name,
+    service_id:   svc.id,
+    full_price:   svc.price,
+    deposit_paid: 0,
+    balance:      svc.price,
+    date:         dateVal,
+    time:         timeVal,
+    status:       'pending',
+    created_at:   new Date().toISOString()
+  };
+
+  var localAdd = function(id) {
+    bookings.push({ id:id||nextBkId++, client:record.client_name, phone:record.client_phone,
+      service:record.service_name, fullPrice:record.full_price, depositPaid:0,
+      balance:record.balance, date:record.date, time:record.time, status:'pending' });
+    notifyWhatsApp(record.client_name, record.client_phone, svc.name, record.date, record.time, svc.price);
+    bookingForm = { name:'',phone:'',service:'',date:'',time:'' };
+    showModal=true; modalType='bookingConfirmation'; render();
+  };
+
+  if (db) {
+    db.from('bookings').insert([record]).select().then(function(r){
+      localAdd(r.data && r.data[0] ? r.data[0].id : null);
+    }).catch(function(){ localAdd(); });
+  } else { localAdd(); }
+}
+
+function submitStaff() {
+  var data = {
+    name:   (el('ms-name')  && el('ms-name').value.trim())  || '',
+    email:  (el('ms-email') && el('ms-email').value.trim()) || '',
+    phone:  (el('ms-phone') && el('ms-phone').value.trim()) || '',
+    role:   (el('ms-role')  && el('ms-role').value)         || 'staff',
+    branch: (el('ms-branch')&& el('ms-branch').value.trim())|| ''
+  };
+  if (!data.name) { alert('Name is required'); return; }
+
+  if (modalType==='addStaff') {
+    var lp = function(id){ staff.push(Object.assign({id:id||nextStId++},data)); closeModal(); };
+    if (db) {
+      db.from('staff').insert([data]).select()
+        .then(function(r){
+          if (r.error) { console.error('Insert error:',r.error); alert('Save failed: '+r.error.message); lp(); }
+          else { lp(r.data&&r.data[0]?r.data[0].id:null); }
+        }).catch(function(e){ console.error(e); lp(); });
+    } else lp();
+  } else {
+    var lu = function(){ var s=staff.find(function(x){return x.id===modalData.id;}); if(s)Object.assign(s,data); closeModal(); };
+    if (db) { db.from('staff').update(data).eq('id',modalData.id).then(function(){ lu(); }).catch(lu); }
+    else lu();
+  }
+}
+
+function submitService() {
+  var data = {
+    name:     (el('msv-name')    && el('msv-name').value.trim())     || '',
+    price:    parseInt((el('msv-price')    && el('msv-price').value))||0,
+    duration: (el('msv-duration')&& el('msv-duration').value.trim()) || '',
+    category: (el('msv-cat')     && el('msv-cat').value)             || ''
+  };
+  if (!data.name) { alert('Service name is required'); return; }
+
+  if (modalType==='addService') {
+    var lp = function(id){ services.push(Object.assign({id:id||nextSvcId++},data)); closeModal(); };
+    if (db) {
+      db.from('services').insert([data]).select()
+        .then(function(r){
+          if (r.error) { console.error('Insert error:',r.error); alert('Save failed: '+r.error.message); lp(); }
+          else { lp(r.data&&r.data[0]?r.data[0].id:null); }
+        }).catch(function(e){ console.error(e); lp(); });
+    } else lp();
+  } else {
+    var lu = function(){ var s=services.find(function(x){return x.id===modalData.id;}); if(s)Object.assign(s,data); closeModal(); };
+    if (db) { db.from('services').update(data).eq('id',modalData.id).then(function(){ lu(); }).catch(lu); }
+    else lu();
+  }
+}
+
+function submitMedia() {
+  var fileInput  = el('media-file-input');
+  var svcEl      = el('media-service');
+  if (!fileInput || !fileInput.files || !fileInput.files[0]) { alert('Please select a file'); return; }
+  if (!svcEl || !svcEl.value) { alert('Please select a service category'); return; }
+
+  var file    = fileInput.files[0];
+  var service = svcEl.value;
+  var isImage = modalType==='uploadImage';
+  var maxSize = isImage ? 10*1024*1024 : 50*1024*1024;
+  if (file.size > maxSize) { alert('File too large. Max '+(isImage?'10MB':'50MB')); return; }
+
+  var submitBtn = document.querySelector('#modal-media-form button[type="submit"]');
+  if (submitBtn) { submitBtn.disabled=true; submitBtn.textContent='Uploading...'; }
+
+  var reader = new FileReader();
+  reader.onload = function(evt) {
+    var fileData = evt.target.result;
+    var record   = {
+      type:        isImage ? 'image' : 'video',
+      service:     service,
+      file_name:   file.name,
+      file_data:   fileData,
+      uploaded_at: new Date().toISOString()
+    };
+    var lp = function(id){
+      gallery.push({ id:id||nextGalId++, type:record.type, service:record.service,
+        fileName:record.file_name, fileData:record.file_data });
+      closeModal();
+    };
+    if (db) {
+      db.from('gallery').insert([record]).select()
+        .then(function(r){
+          if (r.error) { console.error('Insert error:',r.error); alert('Save failed: '+r.error.message); lp(); }
+          else { lp(r.data&&r.data[0]?r.data[0].id:null); }
+        }).catch(function(e){ console.error(e); lp(); });
+    } else lp();
+  };
+  reader.onerror = function(){ alert('Could not read file'); if(submitBtn){submitBtn.disabled=false;submitBtn.textContent='Upload';} };
+  reader.readAsDataURL(file);
+}
+
+function submitInventory() {
+  var name  = el('inv-name')      && el('inv-name').value.trim();
+  var stock = parseInt(el('inv-stock')      && el('inv-stock').value)     || 0;
+  var thr   = parseInt(el('inv-threshold')  && el('inv-threshold').value) || 0;
+  if (!name) { alert('Item name is required'); return; }
+
+  var data = { name:name, stock:stock, threshold:thr, status:stock<=thr?'low':'normal' };
+  var lp = function(id){ inventory.push(Object.assign({id:id||nextInvId++},data)); closeModal(); };
+  if (db) {
+    db.from('inventory').insert([data]).select()
+      .then(function(r){
+        if (r.error) { console.error('Insert error:',r.error); alert('Save failed: '+r.error.message); lp(); }
+        else { lp(r.data&&r.data[0]?r.data[0].id:null); }
+      }).catch(function(e){ console.error(e); lp(); });
+  } else lp();
+}
+
+/* =====================================================================
+   CRUD HELPERS
+   ===================================================================== */
+function updateStatus(id, status) {
+  var b = bookings.find(function(x){ return x.id===id; });
+  if (b) { b.status=status; render(); }
+  if (db) db.from('bookings').update({status:status}).eq('id',id).then(function(){}).catch(function(e){ console.error(e); });
+}
+function deleteStaff(id) {
+  staff = staff.filter(function(s){ return s.id!==id; }); render();
+  if (db) db.from('staff').delete().eq('id',id).then(function(){}).catch(function(e){ console.error(e); });
+}
+function deleteService(id) {
+  services = services.filter(function(s){ return s.id!==id; }); render();
+  if (db) db.from('services').delete().eq('id',id).then(function(){}).catch(function(e){ console.error(e); });
+}
+function deleteInventory(id) {
+  inventory = inventory.filter(function(i){ return i.id!==id; }); render();
+  if (db) db.from('inventory').delete().eq('id',id).then(function(){}).catch(function(e){ console.error(e); });
+}
+function deleteGalleryItem(id) {
+  gallery = gallery.filter(function(g){ return g.id!==id; }); render();
+  if (db) db.from('gallery').delete().eq('id',id).then(function(){}).catch(function(e){ console.error(e); });
+}
+
+function notifyWhatsApp(clientName, clientPhone, serviceName, date, time, price) {
+  /* Always sends to the salon number, not the client */
+  var salonNumber = '254748956804';
+  var deposit = Math.round((price||0) * 0.5);
+  var msg = encodeURIComponent(
+    'New Booking Request\n' +
+    '-------------------\n' +
+    'Client: ' + clientName + '\n' +
+    'Phone: ' + clientPhone + '\n' +
+    'Service: ' + serviceName + '\n' +
+    'Date: ' + date + '\n' +
+    'Time: ' + time + '\n' +
+    'Full Price: KES ' + (price||0) + '\n' +
+    'Deposit Due: KES ' + deposit
+  );
+  try { window.open('https://wa.me/' + salonNumber + '?text=' + msg, '_blank'); } catch(e){}
+}
+
+/* =====================================================================
+   BOOT
+   ===================================================================== */
+document.addEventListener('DOMContentLoaded', function() {
+  /* Show spinner immediately */
+  var app = el('app');
+  if (app) {
+    app.innerHTML = '<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;">'
+      + '<div style="text-align:center;">'
+      + '<div class="spinner" style="width:48px;height:48px;margin:0 auto 16px;"></div>'
+      + '<p style="color:var(--g400);font-size:.875rem;font-family:Outfit,sans-serif;">Loading Fidelis...</p>'
+      + '</div></div>'
+      + '<style>@keyframes spin{to{transform:rotate(360deg)}}</style>';
+  }
+
+  /* ALWAYS load public data (services + gallery) so they show on public site */
+  function loadPublicData(callback) {
+    if (!db) { callback(); return; }
+    Promise.all([
+      db.from('services').select('*'),
+      db.from('gallery').select('*')
+    ]).then(function(results) {
+      var svcRes = results[0];
+      var galRes = results[1];
+      if (!svcRes.error && svcRes.data && svcRes.data.length > 0) {
+        services = svcRes.data;
+      }
+      if (!galRes.error && galRes.data && galRes.data.length > 0) {
+        gallery = galRes.data.map(function(g) {
+          return {
+            id:   g.id,
+            type: g.type    || 'image',
+            service: g.service || '',
+            fileName: g.file_name || g.fileName || '',
+            fileData: g.file_data || g.fileData || null
+          };
+        });
+      }
+      callback();
+    }).catch(function() { callback(); });
+  }
+
+  /* Check for saved admin session */
+  var savedAdmin = null;
+  try { savedAdmin = JSON.parse(localStorage.getItem('fidelis_admin')); } catch(e) {}
+
+  if (savedAdmin && savedAdmin.name) {
+    /* Admin session restored - load all data */
+    loggedIn  = true;
+    view      = 'admin';
+    adminName = savedAdmin.name;
+    adminRole = savedAdmin.role || 'Manager';
+    render();
+    if (db) loadAll();
+  } else if (db) {
+    /* Public visitor - load services+gallery, then check Supabase session */
+    loadPublicData(function() {
+      db.auth.getSession().then(function(r) {
+        if (r.data && r.data.session && r.data.session.user) {
+          loggedIn  = true;
+          view      = 'admin';
+          adminName = r.data.session.user.email.split('@')[0] || 'Admin';
+          render();
+          loadAll(); /* load full data set for admin */
+        } else {
+          render(); /* public site with services+gallery already loaded */
+        }
+      }).catch(function() { render(); });
+    });
+  } else {
+    render();
+  }
+});
+</script>
+</body>
+</html>
