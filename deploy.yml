@@ -1,0 +1,62 @@
+name: Deploy Fidelis to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create config.js from GitHub Secrets
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: |
+          cat > config.js << 'EOF'
+          window.FIDELIS_CONFIG = {
+            SUPABASE_URL: '${SUPABASE_URL}',
+            SUPABASE_KEY: '${SUPABASE_KEY}',
+          };
+          EOF
+          # Use envsubst for safe variable injection
+          echo "window.FIDELIS_CONFIG = {" > config.js
+          echo "  SUPABASE_URL: '${SUPABASE_URL}'," >> config.js
+          echo "  SUPABASE_KEY: '${SUPABASE_KEY}'," >> config.js
+          echo "};" >> config.js
+          echo "config.js created (credentials: Supabase only)"
+
+      - name: Prepare index.html
+        run: |
+          if [ -f fidelis_v2.html ]; then
+            cp fidelis_v2.html index.html
+          fi
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
