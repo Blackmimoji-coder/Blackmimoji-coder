@@ -31,7 +31,6 @@ I design and build scalable systems, automation pipelines, and intelligent appli
 - Node.js
 - Tailwind CSS
 - Docker
-- n8n (Automation)
 
 🧠 AI & Automation
 
@@ -109,7 +108,7 @@ A web app that:
 🌐 Connect With Me
 
 - 💼 Portfolio: Coming Soon
-- 📧 Email: "your-email@example.com" (mailto:your-email@example.com)
+- 📧 Email: "mwandawirokann@gmail.com" (mailto:mwandawirokann@gmail.com)
 - 🐦 X (Twitter): your-handle
 
 ---
