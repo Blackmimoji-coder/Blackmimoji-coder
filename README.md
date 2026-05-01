@@ -107,7 +107,7 @@ A web app that:
 
 🌐 Connect With Me
 
-- 💼 Portfolio: Coming Soon
+- 💼 Portfolio: https://blackmimoji-coder.github.io/portfolio/
 - 📧 Email: "mwandawirokann@gmail.com" (mailto:mwandawirokann@gmail.com)
 - 🐦 X (Twitter): your-handle
 
